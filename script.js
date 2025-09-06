@@ -94,8 +94,17 @@ function calculateDamage() {
     }
     
     // Exibe as escolhas no log
-    writeToLog(`${card1.name} usou ${player1.choice.name}!`);
-    writeToLog(`${card2.name} usou ${player2.choice.name}!`);
+    if (player1.choice) {
+        writeToLog(`${card1.name} usou ${player1.choice.name}!`);
+    } else if (player1.paralysisTurns > 0) {
+        writeToLog(`${card1.name} está paralisado e não pode agir!`);
+    }
+    
+    if (player2.choice) {
+        writeToLog(`${card2.name} usou ${player2.choice.name}!`);
+    } else if (player2.paralysisTurns > 0) {
+        writeToLog(`${card2.name} está paralisado e não pode agir!`);
+    }
     
     // Exibe a vantagem de Rank
     if (rankValue[card1.rank] > rankValue[card2.rank]) {
@@ -113,12 +122,10 @@ function calculateDamage() {
 
     // Aplica o dano
     if (damage1 > damage2) {
-        // Altera o chakra, garantindo que não fique negativo
         player2.chakra = Math.max(0, player2.chakra - damage1);
         writeToLog(`${card1.name} causou ${damage1} de dano.`);
         writeToLog(`${card2.name} tem ${player2.chakra} de Chakra restante.`);
     } else if (damage2 > damage1) {
-        // Altera o chakra, garantindo que não fique negativo
         player1.chakra = Math.max(0, player1.chakra - damage2);
         writeToLog(`${card2.name} causou ${damage2} de dano.`);
         writeToLog(`${card1.name} tem ${player1.chakra} de Chakra restante.`);
@@ -172,9 +179,10 @@ function startRound() {
         // Decrementa o timer de paralisia
         if (player.paralysisTurns > 0) {
             player.paralysisTurns--;
-            if (player.paralysisTurns === 0) {
-                writeToLog(`${cardData[cardId].name} não está mais paralisado!`);
-            }
+        }
+        // Se o jogador está paralisado, a escolha dele é nula
+        if (player.paralysisTurns > 0) {
+            player.choice = null;
         }
     }
 
@@ -189,9 +197,18 @@ function startRound() {
         timeRemaining--;
         timerDisplay.textContent = `${timeRemaining}s`;
 
-        if (timeRemaining <= 0) {
+        // Se ambos os jogadores não estiverem paralisados e escolheram, ou se um deles está paralisado, a rodada pode terminar.
+        const player1 = gameState.players['1naruto-uzumaki'];
+        const player2 = gameState.players['1sasuke-uchiha'];
+
+        const bothNotParalyzed = player1.paralysisTurns === 0 && player2.paralysisTurns === 0;
+        const player1Paralyzed = player1.paralysisTurns > 0;
+        const player2Paralyzed = player2.paralysisTurns > 0;
+
+        if (timeRemaining <= 0 || (player1.choice && player2.choice) || (player1Paralyzed && player2.choice) || (player2Paralyzed && player1.choice)) {
             endRound();
         }
+        
     }, 1000);
 }
 
@@ -199,16 +216,9 @@ window.handleJutsuClick = (cardId, jutsuIndex) => {
     const player = gameState.players[cardId];
     const opponentId = cardId === '1naruto-uzumaki' ? '1sasuke-uchiha' : '1naruto-uzumaki';
     const opponent = gameState.players[opponentId];
-
-    // Verifica se o jogador está paralisado
-    if (player.paralysisTurns > 0) {
-        writeToLog(`${cardData[cardId].name} está paralisado e não pode agir!`);
-        return;
-    }
-    if (player.choice) {
-        return;
-    }
-    if (player.cooldowns[jutsuIndex] > 0) {
+    
+    // O botão já está desabilitado, então não precisa de verificação extra aqui
+    if (player.choice || player.cooldowns[jutsuIndex] > 0) {
         return;
     }
 
@@ -218,18 +228,17 @@ window.handleJutsuClick = (cardId, jutsuIndex) => {
     // Se o jutsu do Naruto é o segundo jutsu (índice 1), paralisa o oponente
     if (cardId === '1naruto-uzumaki' && jutsuIndex === 1) {
         opponent.paralysisTurns = 2;
-        writeToLog(`${cardData[cardId].name} usou ${jutsu.name} e paralisou ${cardData[opponentId].name} por 2 turnos!`);
     }
 
     if (jutsu.cooldown) {
         player.cooldowns[jutsuIndex] = jutsu.cooldown;
     } else {
-        player.cooldowns[jutsuIndex] = 0;
+        // Se a carta nao tem cooldown definido, define um padrao
+        player.cooldowns[jutsuIndex] = 1;
     }
-    
-    // Apenas informa que o jogador fez uma escolha, sem revelar o jutsu
-    writeToLog(`${cardData[cardId].name} fez a sua escolha.`);
 
+    writeToLog(`${cardData[cardId].name} fez a sua escolha.`);
+    
     if (gameState.players['1naruto-uzumaki'].choice && gameState.players['1sasuke-uchiha'].choice) {
         endRound();
     }
