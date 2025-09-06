@@ -66,7 +66,6 @@ main {
     height: 380px;
     justify-content: space-between;
 
-    /* AQUI: Texto branco com sombra para legibilidade */
     color: white;
     text-shadow: 1px 1px 3px rgba(0,0,0,0.7); 
 }
@@ -140,10 +139,10 @@ main {
     margin-bottom: 5px;
     font-size: 12px;
     cursor: pointer;
-    border: 1px solid rgba(255, 255, 255, 0.5); /* Borda clara */
-    background-color: rgba(0, 0, 0, 0.4); /* Fundo semi-transparente escuro */
-    color: white; /* Texto branco */
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* Sombra para legibilidade */
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    background-color: rgba(0, 0, 0, 0.4);
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
     text-align: left;
     white-space: normal;
     min-height: 40px;
@@ -151,40 +150,50 @@ main {
 }
 
 .jutsu-button:hover:not(:disabled) {
-    background-color: rgba(0, 0, 0, 0.6); /* Mais escuro no hover */
+    background-color: rgba(0, 0, 0, 0.6);
 }
 
 .jutsu-button:disabled {
-    background-color: rgba(0, 0, 0, 0.2); /* Mais transparente quando desabilitado */
+    background-color: rgba(0, 0, 0, 0.2);
     color: rgba(255, 255, 255, 0.6);
     cursor: not-allowed;
-    text-shadow: none; /* Remove a sombra para desabilitado */
+    text-shadow: none;
 }
 
 .bottom-stats {
     margin-top: auto;
 }
 
+/* AQUI: Fundo para as estatísticas de HP e Chakra */
 .card-stats {
     display: flex;
     justify-content: space-around;
     font-size: 14px;
     font-weight: bold;
     margin-top: 10px;
-    /* Já herda color: white e text-shadow do .card-display */
+    padding: 5px; /* Adiciona espaçamento */
+    background-color: rgba(0, 0, 0, 0.6); /* Fundo semi-transparente */
+    border-radius: 5px; /* Arredonda as bordas */
 }
 
+/* Mantém as classes para cores específicas se necessário */
 .hp-display {
-    color: red; /* Mantém a cor vermelha para HP */
+    color: red;
     font-weight: bold;
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.7); /* Adiciona sombra para se destacar */
+    text-shadow: none;
+}
+
+.chakra-display {
+    color: #40c9ff;
+    font-weight: bold;
+    text-shadow: none;
 }
 
 .cooldown-text-display {
     font-size: 10px;
     font-weight: bold;
-    color: #eee; /* Cor clara para o cooldown */
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.7); /* Sombra para legibilidade */
+    color: #eee;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
     text-align: center;
     min-height: 20px;
     margin-top: 10px;
