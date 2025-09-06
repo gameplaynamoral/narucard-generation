@@ -67,7 +67,7 @@ function calculateDamage() {
     
     // Calcula o dano do jogador 1
     if (player1.choice) {
-        let basePower = player1.choice.power;
+        let basePower = player1.choice.power || 0;
         // Bônus por Rank
         if (rankValue[card1.rank] > rankValue[card2.rank]) {
             basePower += 5;
@@ -87,7 +87,7 @@ function calculateDamage() {
 
     // Calcula o dano do jogador 2
     if (player2.choice) {
-        let basePower = player2.choice.power;
+        let basePower = player2.choice.power || 0;
         // Bônus por Rank
         if (rankValue[card2.rank] > rankValue[card1.rank]) {
             basePower += 5;
@@ -179,7 +179,7 @@ function startRound() {
         
         // Aplica a paralisia pendente
         if (player.pendingParalysis) {
-            player.paralysisTurns = 2;
+            player.paralysisTurns = 1;
             player.pendingParalysis = false;
         }
 
@@ -242,8 +242,6 @@ window.handleJutsuClick = (cardId, jutsuIndex) => {
     
     if (jutsu.cooldown) {
         player.cooldowns[jutsuIndex] = jutsu.cooldown;
-    } else {
-        player.cooldowns[jutsuIndex] = 1; 
     }
 
     writeToLog(`${cardData[cardId].name} fez a sua escolha.`);
