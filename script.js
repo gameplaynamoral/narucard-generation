@@ -16,8 +16,8 @@ let timeRemaining = 20;
 const gameState = {
     turn: 0,
     players: {
-        '1naruto-uzumaki': { chakra: 0, choice: null, cooldowns: {}, paralysisTurns: 0, pendingParalysis: false },
-        '1sasuke-uchiha': { chakra: 0, choice: null, cooldowns: {}, paralysisTurns: 0, pendingParalysis: false }
+        '1naruto-uzumaki': { chakra: 0, choice: null, choiceIndex: null, cooldowns: {}, paralysisTurns: 0, pendingParalysis: false },
+        '1sasuke-uchiha': { chakra: 0, choice: null, choiceIndex: null, cooldowns: {}, paralysisTurns: 0, pendingParalysis: false }
     }
 };
 
@@ -67,25 +67,26 @@ function calculateDamage() {
     
     // Calcula o dano do jogador 1
     if (player1.choice) {
-        // Se a escolha for o primeiro jutsu, use o poder da carta
-        if (player1.choice.name === card1.jutsus[0].name) {
-            damage1 = card1.power;
-        } else {
-            // Se for o segundo jutsu, use o poder específico do jutsu ou 0 se for de efeito
-            damage1 = player1.choice.power || 0;
+        let basePower = 0;
+        // Jutsu 1 usa o poder da carta, Jutsu 2 é um efeito
+        if (player1.choiceIndex === 0) {
+            basePower = card1.power;
+        } else if (player1.choiceIndex === 1) {
+            basePower = player1.choice.power || 0;
         }
 
-        // Aplica bônus de Rank e Elemento
+        // Bônus por Rank
         if (rankValue[card1.rank] > rankValue[card2.rank]) {
-            damage1 += 5;
+            basePower += 5;
         }
+        // Bônus por Elemento - Modificado para incluir a Genkai
         if (elementalAdvantage[card1.element] === card2.element || (card1.element === 'Genkai' && elementalAdvantage.Genkai.includes(card2.element))) {
-            damage1 += 5;
+            basePower += 5;
         }
-        damage1 = Math.floor(damage1);
+        damage1 = Math.floor(basePower);
         
         // Se o jutsu 2 de naruto foi usado, nao causa dano e ativa a paralisia pendente
-        if (card1.id === '1naruto-uzumaki' && player1.choice.name === 'Sexy') {
+        if (card1.id === '1naruto-uzumaki' && player1.choiceIndex === 1) {
              damage1 = 0;
              player2.pendingParalysis = true;
         }
@@ -93,22 +94,23 @@ function calculateDamage() {
 
     // Calcula o dano do jogador 2
     if (player2.choice) {
-        // Se a escolha for o primeiro jutsu, use o poder da carta
-        if (player2.choice.name === card2.jutsus[0].name) {
-            damage2 = card2.power;
-        } else {
-            // Se for o segundo jutsu, use o poder específico do jutsu ou 0 se for de efeito
-            damage2 = player2.choice.power || 0;
+        let basePower = 0;
+        // Jutsu 1 usa o poder da carta, Jutsu 2 é um efeito
+        if (player2.choiceIndex === 0) {
+            basePower = card2.power;
+        } else if (player2.choiceIndex === 1) {
+            basePower = player2.choice.power || 0;
         }
 
-        // Aplica bônus de Rank e Elemento
+        // Bônus por Rank
         if (rankValue[card2.rank] > rankValue[card1.rank]) {
-            damage2 += 5;
+            basePower += 5;
         }
+        // Bônus por Elemento - Modificado para incluir a Genkai
         if (elementalAdvantage[card2.element] === card1.element || (card2.element === 'Genkai' && elementalAdvantage.Genkai.includes(card1.element))) {
-            damage2 += 5;
+            basePower += 5;
         }
-        damage2 = Math.floor(damage2);
+        damage2 = Math.floor(basePower);
     }
     
     // Exibe as escolhas no log
@@ -153,7 +155,9 @@ function calculateDamage() {
 
     // Limpa as escolhas para a próxima rodada
     player1.choice = null;
+    player1.choiceIndex = null;
     player2.choice = null;
+    player2.choiceIndex = null;
 }
 
 function checkWinCondition() {
@@ -210,6 +214,7 @@ function startRound() {
         // Se o jogador está paralisado, a escolha dele é nula
         if (player.paralysisTurns > 0) {
             player.choice = null;
+            player.choiceIndex = null;
         }
     }
 
@@ -251,6 +256,7 @@ window.handleJutsuClick = (cardId, jutsuIndex) => {
 
     const jutsu = cardData[cardId].jutsus[jutsuIndex];
     player.choice = jutsu;
+    player.choiceIndex = jutsuIndex;
     
     if (jutsu.cooldown) {
         player.cooldowns[jutsuIndex] = jutsu.cooldown;
