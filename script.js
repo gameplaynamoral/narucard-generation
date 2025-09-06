@@ -323,8 +323,8 @@ function loadCards() {
 
         const card2Data = docs[1].data();
         card2Data.id = cardId2;
-        cardData[card2Id] = card2Data;
-        gameState.players[card2Id].chakra = card2Data.chakra;
+        cardData[cardId2] = card2Data;
+        gameState.players[cardId2].chakra = card2Data.chakra;
 
         updateUI();
         startRound();
