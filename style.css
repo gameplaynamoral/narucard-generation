@@ -164,19 +164,17 @@ main {
     margin-top: auto;
 }
 
-/* AQUI: Fundo para as estatísticas de HP e Chakra */
 .card-stats {
     display: flex;
     justify-content: space-around;
     font-size: 14px;
     font-weight: bold;
     margin-top: 10px;
-    padding: 5px; /* Adiciona espaçamento */
-    background-color: rgba(0, 0, 0, 0.6); /* Fundo semi-transparente */
-    border-radius: 5px; /* Arredonda as bordas */
+    padding: 5px;
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 5px;
 }
 
-/* Mantém as classes para cores específicas se necessário */
 .hp-display {
     color: red;
     font-weight: bold;
@@ -209,29 +207,37 @@ main {
 
 .battle-info h2 {
     margin-top: 0;
+    color: white;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
 }
 
+/* AQUI: Fundo e estilo para o registro da batalha */
 .battle-log-container {
     border: 2px solid black;
     padding: 8px;
-    background-color: white;
+    background-color: rgba(0, 0, 0, 0.6);
     box-shadow: 4px 4px 8px rgba(0,0,0,0.2);
     width: 100%;
     height: 200px;
     overflow-y: auto;
     margin-bottom: 10px;
     text-align: left;
+    color: #eee;
+    border-radius: 5px;
 }
 
 #timer-container {
     font-size: 16px;
     margin-bottom: 10px;
+    color: #ff9900;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
 }
 
 #timer {
     font-size: 20px;
     font-weight: bold;
-    color: #333;
+    color: #ff9900;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
 }
 
 /* ========================================================================= */
