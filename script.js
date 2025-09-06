@@ -78,8 +78,8 @@ function calculateDamage() {
             basePower *= 1.25; // 25% de bônus
             writeToLog(`${card1.name} tem vantagem elemental sobre ${card2.name}!`);
         }
-        damage1 = Math.floor(basePower); // Garante que o dano é um número inteiro
-        writeToLog(`${card1.name} usou ${player1.choice.name} e causou ${damage1} de dano.`);
+        damage1 = basePower;
+        writeToLog(`${card1.name} usou ${player1.choice.name} e causou ${damage1.toFixed(0)} de dano.`);
     }
 
     // Calcula o dano do jogador 2
@@ -95,19 +95,19 @@ function calculateDamage() {
             basePower *= 1.25; // 25% de bônus
             writeToLog(`${card2.name} tem vantagem elemental sobre ${card1.name}!`);
         }
-        damage2 = Math.floor(basePower); // Garante que o dano é um número inteiro
-        writeToLog(`${card2.name} usou ${player2.choice.name} e causou ${damage2} de dano.`);
+        damage2 = basePower;
+        writeToLog(`${card2.name} usou ${player2.choice.name} e causou ${damage2.toFixed(0)} de dano.`);
     }
 
     // Aplica o dano
     if (damage1 > damage2) {
         // Altera o chakra, garantindo que não fique negativo
         player2.chakra = Math.max(0, player2.chakra - damage1);
-        writeToLog(`${card2.name} tem ${player2.chakra} de Chakra restante.`);
+        writeToLog(`${card2.name} tem ${player2.chakra.toFixed(0)} de Chakra restante.`);
     } else if (damage2 > damage1) {
         // Altera o chakra, garantindo que não fique negativo
         player1.chakra = Math.max(0, player1.chakra - damage2);
-        writeToLog(`${card1.name} tem ${player1.chakra} de Chakra restante.`);
+        writeToLog(`${card1.name} tem ${player1.chakra.toFixed(0)} de Chakra restante.`);
     } else {
         writeToLog('Os jutsus se anularam! Nenhum dano foi causado.');
     }
@@ -262,8 +262,8 @@ function loadCards() {
 
         const card2Data = docs[1].data();
         card2Data.id = cardId2;
-        cardData[cardId2] = card2Data;
-        gameState.players[cardId2].chakra = card2Data.chakra;
+        cardData[card2Id] = card2Data;
+        gameState.players[card2Id].chakra = card2Data.chakra;
 
         updateUI();
         startRound();
