@@ -16,8 +16,8 @@ let timeRemaining = 20;
 const gameState = {
     turn: 0,
     players: {
-        '1naruto-uzumaki': { chakra: 0, choice: null, cooldowns: {}, paralysisTurns: 0 },
-        '1sasuke-uchiha': { chakra: 0, choice: null, cooldowns: {}, paralysisTurns: 0 }
+        '1naruto-uzumaki': { chakra: 0, choice: null, cooldowns: {}, paralysisTurns: 0, pendingParalysis: false },
+        '1sasuke-uchiha': { chakra: 0, choice: null, cooldowns: {}, paralysisTurns: 0, pendingParalysis: false }
     }
 };
 
@@ -67,7 +67,7 @@ function calculateDamage() {
     
     // Calcula o dano do jogador 1
     if (player1.choice) {
-        let basePower = card1.power;
+        let basePower = player1.choice.power;
         // Bônus por Rank
         if (rankValue[card1.rank] > rankValue[card2.rank]) {
             basePower += 5;
@@ -77,11 +77,17 @@ function calculateDamage() {
             basePower += 5;
         }
         damage1 = Math.floor(basePower);
+        
+        // Se o jutsu 2 de naruto foi usado, nao causa dano e ativa a paralisia pendente
+        if (card1.id === '1naruto-uzumaki' && player1.choice.name === card1.jutsus[1].name) {
+             damage1 = 0;
+             player2.pendingParalysis = true;
+        }
     }
 
     // Calcula o dano do jogador 2
     if (player2.choice) {
-        let basePower = card2.power;
+        let basePower = player2.choice.power;
         // Bônus por Rank
         if (rankValue[card2.rank] > rankValue[card1.rank]) {
             basePower += 5;
@@ -168,6 +174,15 @@ function endRound() {
 function startRound() {
     for (const cardId in gameState.players) {
         const player = gameState.players[cardId];
+        const opponentId = cardId === '1naruto-uzumaki' ? '1sasuke-uchiha' : '1naruto-uzumaki';
+        const opponent = gameState.players[opponentId];
+        
+        // Aplica a paralisia pendente
+        if (player.pendingParalysis) {
+            player.paralysisTurns = 2;
+            player.pendingParalysis = false;
+        }
+
         for (const jutsuIndex in player.cooldowns) {
             if (player.cooldowns[jutsuIndex] > 0) {
                 player.cooldowns[jutsuIndex]--;
@@ -224,17 +239,11 @@ window.handleJutsuClick = (cardId, jutsuIndex) => {
 
     const jutsu = cardData[cardId].jutsus[jutsuIndex];
     player.choice = jutsu;
-
-    // Se o jutsu do Naruto é o segundo jutsu (índice 1), paralisa o oponente
-    if (cardId === '1naruto-uzumaki' && jutsuIndex === 1) {
-        opponent.paralysisTurns = 2;
-    }
-
+    
     if (jutsu.cooldown) {
         player.cooldowns[jutsuIndex] = jutsu.cooldown;
     } else {
-        // Se a carta nao tem cooldown definido, define um padrao
-        player.cooldowns[jutsuIndex] = 1;
+        player.cooldowns[jutsuIndex] = 1; 
     }
 
     writeToLog(`${cardData[cardId].name} fez a sua escolha.`);
@@ -316,8 +325,8 @@ function loadCards() {
 
         const card2Data = docs[1].data();
         card2Data.id = cardId2;
-        cardData[cardId2] = card2Data;
-        gameState.players[cardId2].chakra = card2Data.chakra;
+        cardData[card2Id] = card2Data;
+        gameState.players[card2Id].chakra = card2Data.chakra;
 
         updateUI();
         startRound();
