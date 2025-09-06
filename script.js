@@ -67,7 +67,7 @@ function calculateDamage() {
     
     // Calcula o dano do jogador 1
     if (player1.choice) {
-        let basePower = player1.choice.power || card1.power;
+        let basePower = player1.choice.power ? player1.choice.power : card1.power;
         
         // Bônus por Rank
         if (rankValue[card1.rank] > rankValue[card2.rank]) {
@@ -80,7 +80,7 @@ function calculateDamage() {
         damage1 = Math.floor(basePower);
         
         // Se o jutsu 2 de naruto foi usado, nao causa dano e ativa a paralisia pendente
-        if (card1.id === '1naruto-uzumaki' && player1.choice.name === card1.jutsus[1].name) {
+        if (card1.id === '1naruto-uzumaki' && player1.choice === card1.jutsus[1]) {
              damage1 = 0;
              player2.pendingParalysis = true;
         }
@@ -88,7 +88,7 @@ function calculateDamage() {
 
     // Calcula o dano do jogador 2
     if (player2.choice) {
-        let basePower = player2.choice.power || card2.power;
+        let basePower = player2.choice.power ? player2.choice.power : card2.power;
         // Bônus por Rank
         if (rankValue[card2.rank] > rankValue[card1.rank]) {
             basePower += 5;
