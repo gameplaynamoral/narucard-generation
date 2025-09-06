@@ -67,20 +67,25 @@ function calculateDamage() {
     
     // Calcula o dano do jogador 1
     if (player1.choice) {
-        let basePower = player1.choice.power ? player1.choice.power : card1.power;
-        
-        // Bônus por Rank
+        // Se a escolha for o primeiro jutsu, use o poder da carta
+        if (player1.choice.name === card1.jutsus[0].name) {
+            damage1 = card1.power;
+        } else {
+            // Se for o segundo jutsu, use o poder específico do jutsu ou 0 se for de efeito
+            damage1 = player1.choice.power || 0;
+        }
+
+        // Aplica bônus de Rank e Elemento
         if (rankValue[card1.rank] > rankValue[card2.rank]) {
-            basePower += 5;
+            damage1 += 5;
         }
-        // Bônus por Elemento - Modificado para incluir a Genkai
         if (elementalAdvantage[card1.element] === card2.element || (card1.element === 'Genkai' && elementalAdvantage.Genkai.includes(card2.element))) {
-            basePower += 5;
+            damage1 += 5;
         }
-        damage1 = Math.floor(basePower);
+        damage1 = Math.floor(damage1);
         
         // Se o jutsu 2 de naruto foi usado, nao causa dano e ativa a paralisia pendente
-        if (card1.id === '1naruto-uzumaki' && player1.choice === card1.jutsus[1]) {
+        if (card1.id === '1naruto-uzumaki' && player1.choice.name === 'Sexy') {
              damage1 = 0;
              player2.pendingParalysis = true;
         }
@@ -88,16 +93,22 @@ function calculateDamage() {
 
     // Calcula o dano do jogador 2
     if (player2.choice) {
-        let basePower = player2.choice.power ? player2.choice.power : card2.power;
-        // Bônus por Rank
+        // Se a escolha for o primeiro jutsu, use o poder da carta
+        if (player2.choice.name === card2.jutsus[0].name) {
+            damage2 = card2.power;
+        } else {
+            // Se for o segundo jutsu, use o poder específico do jutsu ou 0 se for de efeito
+            damage2 = player2.choice.power || 0;
+        }
+
+        // Aplica bônus de Rank e Elemento
         if (rankValue[card2.rank] > rankValue[card1.rank]) {
-            basePower += 5;
+            damage2 += 5;
         }
-        // Bônus por Elemento - Modificado para incluir a Genkai
         if (elementalAdvantage[card2.element] === card1.element || (card2.element === 'Genkai' && elementalAdvantage.Genkai.includes(card1.element))) {
-            basePower += 5;
+            damage2 += 5;
         }
-        damage2 = Math.floor(basePower);
+        damage2 = Math.floor(damage2);
     }
     
     // Exibe as escolhas no log
