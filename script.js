@@ -67,7 +67,8 @@ function calculateDamage() {
     
     // Calcula o dano do jogador 1
     if (player1.choice) {
-        let basePower = player1.choice.power || 0;
+        let basePower = player1.choice.power || card1.power;
+        
         // Bônus por Rank
         if (rankValue[card1.rank] > rankValue[card2.rank]) {
             basePower += 5;
@@ -87,7 +88,7 @@ function calculateDamage() {
 
     // Calcula o dano do jogador 2
     if (player2.choice) {
-        let basePower = player2.choice.power || 0;
+        let basePower = player2.choice.power || card2.power;
         // Bônus por Rank
         if (rankValue[card2.rank] > rankValue[card1.rank]) {
             basePower += 5;
