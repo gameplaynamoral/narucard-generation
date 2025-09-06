@@ -1,0 +1,43 @@
+{
+  "1naruto-uzumaki": {
+    "name": "Naruto Uzumaki",
+    "rank": "E",
+    "image_url": "https://github.com/gameplaynamoral/narucard-generation/blob/master/images/1naruto-uzumaki.webp?raw=true",
+    "jutsus": [
+      {
+        "name": "Multiclones da Sombra",
+        "description": "Cria clones para atacar o inimigo"
+      },
+      {
+        "name": "Sexy",
+        "description": "paralisa o inimigo por 1 rodada",
+        "cooldown": 3
+      }
+    ],
+    "power": 10,
+    "chakra": 30,
+    "element": "Vento"
+  }, 
+
+  "1sasuke-uchiha": { 
+    "name": "Sasuke Uchiha",
+    "rank": "E",
+    "image_url": "https://github.com/gameplaynamoral/narucard-generation/blob/master/images/1sasuke-uchiha.webp?raw=true",
+    "jutsus": [
+      {
+        "name": "Bola de Fogo",
+        "description": "Cospe uma grande bola de fogo."
+      },
+      {
+        "name": "Sharingan",
+        "description": "Bloqueia o ataque do inimigo dasdadsdas asda dadasdasdasdasdadada",
+        "cooldown": 2
+      }
+    ],
+    "power": 15,
+    "chakra": 20,
+    "element": "Fogo"
+  }
+
+  
+}

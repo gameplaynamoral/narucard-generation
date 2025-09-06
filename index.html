@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Narucard Generation</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="background-changer.js" defer></script>
+</head>
+<body>
+
+    <div class="background-container"></div>
+    <header>
+        <h1>Narucard Generation</h1>
+    </header>
+    <main>
+        <div class="game-container">
+            <div id="card-display-1" class="card-display">
+                <h1>Carregando carta...</h1>
+            </div>
+            <div class="battle-info">
+                <h2>Registro da Batalha</h2>
+                <div id="timer-container">Tempo restante: <span id="timer"></span></div>
+                <div id="battle-log" class="battle-log-container"></div>
+            </div>
+            <div id="card-display-2" class="card-display">
+                <h1>Carregando carta...</h1>
+            </div>
+        </div>
+    </main>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
