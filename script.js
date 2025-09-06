@@ -68,7 +68,7 @@ function calculateDamage() {
     // Calcula o dano do jogador 1
     if (player1.choice) {
         let basePower = 0;
-        // Jutsu 1 usa o poder da carta, Jutsu 2 é um efeito
+        // Jutsu 1 (index 0) usa o poder da carta, Jutsu 2 (index 1) usa o poder específico ou 0.
         if (player1.choiceIndex === 0) {
             basePower = card1.power;
         } else if (player1.choiceIndex === 1) {
@@ -95,7 +95,7 @@ function calculateDamage() {
     // Calcula o dano do jogador 2
     if (player2.choice) {
         let basePower = 0;
-        // Jutsu 1 usa o poder da carta, Jutsu 2 é um efeito
+        // Jutsu 1 (index 0) usa o poder da carta, Jutsu 2 (index 1) usa o poder específico ou 0.
         if (player2.choiceIndex === 0) {
             basePower = card2.power;
         } else if (player2.choiceIndex === 1) {
