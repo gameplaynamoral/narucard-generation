@@ -65,43 +65,47 @@ main {
     flex-direction: column;
     height: 380px;
     justify-content: space-between;
+
+    /* AQUI: Texto branco com sombra para legibilidade */
+    color: white;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.7); 
 }
 
 /* Cores de borda e fundos baseadas no elemento */
 .card-display.fogo {
     border: 3px solid #e25822;
     box-shadow: 0 0 15px #e25822;
-    background-image: url('img/fogo.png'); /* Alterado para .png */
+    background-image: url('img/fogo.png');
 }
 
 .card-display.vento {
     border: 3px solid #16a085;
     box-shadow: 0 0 15px #16a085;
-    background-image: url('img/vento.png'); /* Alterado para .png */
+    background-image: url('img/vento.png');
 }
 
 .card-display.relampago {
     border: 3px solid #f1c40f;
     box-shadow: 0 0 15px #f1c40f;
-    background-image: url('img/relampago.png'); /* Alterado para .png */
+    background-image: url('img/relampago.png');
 }
 
 .card-display.terra {
     border: 3px solid #8B4513;
     box-shadow: 0 0 15px #8B4513;
-    background-image: url('img/terra.png'); /* Alterado para .png */
+    background-image: url('img/terra.png');
 }
 
 .card-display.agua {
     border: 3px solid #3498db;
     box-shadow: 0 0 15px #3498db;
-    background-image: url('img/agua.png'); /* Alterado para .png */
+    background-image: url('img/agua.png');
 }
 
 .card-display.genkai {
     border: 3px solid #b399ff;
     box-shadow: 0 0 15px #b399ff;
-    background-image: url('img/genkai.png'); /* Alterado para .png */
+    background-image: url('img/genkai.png');
 }
 
 .card-name {
@@ -136,21 +140,25 @@ main {
     margin-bottom: 5px;
     font-size: 12px;
     cursor: pointer;
-    border: 1px solid #ccc;
-    background-color: #e0e0e0;
+    border: 1px solid rgba(255, 255, 255, 0.5); /* Borda clara */
+    background-color: rgba(0, 0, 0, 0.4); /* Fundo semi-transparente escuro */
+    color: white; /* Texto branco */
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* Sombra para legibilidade */
     text-align: left;
     white-space: normal;
     min-height: 40px;
+    border-radius: 5px;
 }
 
 .jutsu-button:hover:not(:disabled) {
-    background-color: #d0d0d0;
+    background-color: rgba(0, 0, 0, 0.6); /* Mais escuro no hover */
 }
 
 .jutsu-button:disabled {
-    background-color: #ccc;
-    color: #888;
+    background-color: rgba(0, 0, 0, 0.2); /* Mais transparente quando desabilitado */
+    color: rgba(255, 255, 255, 0.6);
     cursor: not-allowed;
+    text-shadow: none; /* Remove a sombra para desabilitado */
 }
 
 .bottom-stats {
@@ -163,17 +171,20 @@ main {
     font-size: 14px;
     font-weight: bold;
     margin-top: 10px;
+    /* Já herda color: white e text-shadow do .card-display */
 }
 
 .hp-display {
-    color: red;
+    color: red; /* Mantém a cor vermelha para HP */
     font-weight: bold;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.7); /* Adiciona sombra para se destacar */
 }
 
 .cooldown-text-display {
     font-size: 10px;
     font-weight: bold;
-    color: #555;
+    color: #eee; /* Cor clara para o cooldown */
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.7); /* Sombra para legibilidade */
     text-align: center;
     min-height: 20px;
     margin-top: 10px;
@@ -252,6 +263,10 @@ main {
         font-size: 11px;
         padding: 6px;
         min-height: 35px;
+    }
+    
+    .card-stats {
+        font-size: 13px;
     }
     
     .cooldown-text-display {
