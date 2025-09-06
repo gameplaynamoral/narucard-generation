@@ -16,8 +16,8 @@ let timeRemaining = 20;
 const gameState = {
     turn: 0,
     players: {
-        '1naruto-uzumaki': { chakra: 0, choice: null, cooldowns: {} },
-        '1sasuke-uchiha': { chakra: 0, choice: null, cooldowns: {} }
+        '1naruto-uzumaki': { chakra: 0, choice: null, cooldowns: {}, paralysisTurns: 0 },
+        '1sasuke-uchiha': { chakra: 0, choice: null, cooldowns: {}, paralysisTurns: 0 }
     }
 };
 
@@ -74,9 +74,9 @@ function calculateDamage() {
         }
         // Bônus por Elemento - Modificado para incluir a Genkai
         if (elementalAdvantage[card1.element] === card2.element || (card1.element === 'Genkai' && elementalAdvantage.Genkai.includes(card2.element))) {
-            basePower *= 1.25; // 25% de bônus
+            basePower += 5;
         }
-        damage1 = Math.floor(basePower); // Garante que o dano é um número inteiro
+        damage1 = Math.floor(basePower);
     }
 
     // Calcula o dano do jogador 2
@@ -88,9 +88,9 @@ function calculateDamage() {
         }
         // Bônus por Elemento - Modificado para incluir a Genkai
         if (elementalAdvantage[card2.element] === card1.element || (card2.element === 'Genkai' && elementalAdvantage.Genkai.includes(card1.element))) {
-            basePower *= 1.25; // 25% de bônus
+            basePower += 5;
         }
-        damage2 = Math.floor(basePower); // Garante que o dano é um número inteiro
+        damage2 = Math.floor(basePower);
     }
     
     // Exibe as escolhas no log
@@ -169,6 +169,13 @@ function startRound() {
                 delete player.cooldowns[jutsuIndex];
             }
         }
+        // Decrementa o timer de paralisia
+        if (player.paralysisTurns > 0) {
+            player.paralysisTurns--;
+            if (player.paralysisTurns === 0) {
+                writeToLog(`${cardData[cardId].name} não está mais paralisado!`);
+            }
+        }
     }
 
     timeRemaining = 20;
@@ -189,20 +196,35 @@ function startRound() {
 }
 
 window.handleJutsuClick = (cardId, jutsuIndex) => {
-    if (gameState.players[cardId].choice) {
+    const player = gameState.players[cardId];
+    const opponentId = cardId === '1naruto-uzumaki' ? '1sasuke-uchiha' : '1naruto-uzumaki';
+    const opponent = gameState.players[opponentId];
+
+    // Verifica se o jogador está paralisado
+    if (player.paralysisTurns > 0) {
+        writeToLog(`${cardData[cardId].name} está paralisado e não pode agir!`);
         return;
     }
-    if (gameState.players[cardId].cooldowns[jutsuIndex] > 0) {
+    if (player.choice) {
+        return;
+    }
+    if (player.cooldowns[jutsuIndex] > 0) {
         return;
     }
 
     const jutsu = cardData[cardId].jutsus[jutsuIndex];
-    gameState.players[cardId].choice = jutsu;
+    player.choice = jutsu;
+
+    // Se o jutsu do Naruto é o segundo jutsu (índice 1), paralisa o oponente
+    if (cardId === '1naruto-uzumaki' && jutsuIndex === 1) {
+        opponent.paralysisTurns = 2;
+        writeToLog(`${cardData[cardId].name} usou ${jutsu.name} e paralisou ${cardData[opponentId].name} por 2 turnos!`);
+    }
 
     if (jutsu.cooldown) {
-        gameState.players[cardId].cooldowns[jutsuIndex] = jutsu.cooldown;
+        player.cooldowns[jutsuIndex] = jutsu.cooldown;
     } else {
-        gameState.players[cardId].cooldowns[jutsuIndex] = 0;
+        player.cooldowns[jutsuIndex] = 0;
     }
     
     // Apenas informa que o jogador fez uma escolha, sem revelar o jutsu
@@ -218,6 +240,13 @@ function renderCard(card, elementId) {
     const playerState = gameState.players[card.id];
 
     let totalCooldownForCard = 0;
+    const isParalyzed = playerState.paralysisTurns > 0;
+    
+    let paralysisText = '';
+    if (isParalyzed) {
+        paralysisText = `<span style="color: yellow; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);">PARALISADO (${playerState.paralysisTurns})</span>`;
+    }
+
     const jutsusHTML = card.jutsus ?
         `<div class="card-jutsus">` +
         card.jutsus.map((jutsu, index) => {
@@ -225,7 +254,7 @@ function renderCard(card, elementId) {
             const jutsuDescription = jutsu.description;
 
             const cooldown = playerState.cooldowns[index] || 0;
-            const isDisabled = cooldown > 0 || !!playerState.choice;
+            const isDisabled = cooldown > 0 || !!playerState.choice || isParalyzed;
             const onclick = `handleJutsuClick('${card.id}', ${index})`;
 
             if (cooldown > 0) {
@@ -253,6 +282,7 @@ function renderCard(card, elementId) {
             <span class="hp-display">CHAKRA: ${playerState.chakra}</span>
         </div>
         <div class="cooldown-text-display">${cooldownDisplayText}</div>
+        ${paralysisText}
     `;
 
     // Alterado para aplicar a classe 'genkai'
