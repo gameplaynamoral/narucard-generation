@@ -55,6 +55,30 @@ function updateUI() {
     renderCard(cardData['1sasuke-uchiha'], 'card-display-2');
 }
 
+// Nova função para calcular o dano de forma consistente para ambos os jogadores
+function getDamage(player, card, opponentCard) {
+    let basePower = 0;
+    // Se a escolha for o primeiro jutsu (índice 0), usa o poder da carta
+    if (player.choiceIndex === 0) {
+        basePower = card.power;
+    } else if (player.choiceIndex === 1) {
+        // Se for o segundo jutsu (índice 1), usa o poder específico do jutsu ou 0
+        basePower = player.choice.power || 0;
+    }
+
+    // Aplica bônus de Rank
+    if (rankValue[card.rank] > rankValue[opponentCard.rank]) {
+        basePower += 5;
+    }
+    // Aplica bônus de Elemento
+    if (elementalAdvantage[card.element] === opponentCard.element || (card.element === 'Genkai' && elementalAdvantage.Genkai.includes(opponentCard.element))) {
+        basePower += 5;
+    }
+    
+    // Retorna o dano total
+    return Math.floor(basePower);
+}
+
 function calculateDamage() {
     const player1 = gameState.players['1naruto-uzumaki'];
     const player2 = gameState.players['1sasuke-uchiha'];
@@ -65,54 +89,22 @@ function calculateDamage() {
     let damage1 = 0;
     let damage2 = 0;
     
-    // Calcula o dano do jogador 1
+    // Calcula o dano do jogador 1 usando a nova função
     if (player1.choice) {
-        let basePower = 0;
-        // Jutsu 1 (index 0) usa o poder da carta, Jutsu 2 (index 1) usa o poder específico ou 0.
-        if (player1.choiceIndex === 0) {
-            basePower = card1.power;
-        } else if (player1.choiceIndex === 1) {
-            basePower = player1.choice.power || 0;
-        }
-
-        // Bônus por Rank
-        if (rankValue[card1.rank] > rankValue[card2.rank]) {
-            basePower += 5;
-        }
-        // Bônus por Elemento - Modificado para incluir a Genkai
-        if (elementalAdvantage[card1.element] === card2.element || (card1.element === 'Genkai' && elementalAdvantage.Genkai.includes(card2.element))) {
-            basePower += 5;
-        }
-        damage1 = Math.floor(basePower);
-        
-        // Se o jutsu 2 de naruto foi usado, nao causa dano e ativa a paralisia pendente
-        if (card1.id === '1naruto-uzumaki' && player1.choiceIndex === 1) {
-             damage1 = 0;
-             player2.pendingParalysis = true;
-        }
+        damage1 = getDamage(player1, card1, card2);
     }
 
-    // Calcula o dano do jogador 2
+    // Calcula o dano do jogador 2 usando a nova função
     if (player2.choice) {
-        let basePower = 0;
-        // Jutsu 1 (index 0) usa o poder da carta, Jutsu 2 (index 1) usa o poder específico ou 0.
-        if (player2.choiceIndex === 0) {
-            basePower = card2.power;
-        } else if (player2.choiceIndex === 1) {
-            basePower = player2.choice.power || 0;
-        }
-
-        // Bônus por Rank
-        if (rankValue[card2.rank] > rankValue[card1.rank]) {
-            basePower += 5;
-        }
-        // Bônus por Elemento - Modificado para incluir a Genkai
-        if (elementalAdvantage[card2.element] === card1.element || (card2.element === 'Genkai' && elementalAdvantage.Genkai.includes(card1.element))) {
-            basePower += 5;
-        }
-        damage2 = Math.floor(basePower);
+        damage2 = getDamage(player2, card2, card1);
     }
     
+    // Se o jutsu 2 de naruto foi usado, nao causa dano e ativa a paralisia pendente
+    if (card1.id === '1naruto-uzumaki' && player1.choiceIndex === 1) {
+         damage1 = 0;
+         player2.pendingParalysis = true;
+    }
+
     // Exibe as escolhas no log
     if (player1.choice) {
         writeToLog(`${card1.name} usou ${player1.choice.name}!`);
@@ -137,7 +129,7 @@ function calculateDamage() {
     if (elementalAdvantage[card1.element] === card2.element || (card1.element === 'Genkai' && elementalAdvantage.Genkai.includes(card2.element))) {
         writeToLog(`${card1.name} tem vantagem elemental sobre ${card2.name}!`);
     } else if (elementalAdvantage[card2.element] === card1.element || (card2.element === 'Genkai' && elementalAdvantage.Genkai.includes(card1.element))) {
-        writeToLog(`${card2.name} tem vantagem elemental sobre ${card1.name}!`);
+        writeToLog(`${card2.name} tem vantagem elemental sobre ${player1.name}!`);
     }
 
     // Aplica o dano
